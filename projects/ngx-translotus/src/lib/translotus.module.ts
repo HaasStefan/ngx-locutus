@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxTranslotusComponent } from './ngx-translotus.component';
+import { TranslotusDirective } from './directives/translotus.directive';
 
 
 
 @NgModule({
-  declarations: [NgxTranslotusComponent],
+  declarations: [NgxTranslotusComponent, TranslotusDirective],
   imports: [
     CommonModule
   ],

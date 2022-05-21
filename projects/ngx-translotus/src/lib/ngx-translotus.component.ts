@@ -6,6 +6,10 @@ import { Component, OnInit } from '@angular/core';
     <p>
       ngx-translotus works!
     </p>
+
+    <ng-container *translotus="let t of 'shared'">
+      t.abc: {{t.abc}}
+    </ng-container>
   `,
   styles: [
   ]
