@@ -3,5 +3,37 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-  }
+    "ngx-translotus": {
+      "projectType": "library",
+      "root": "projects/ngx-translotus",
+      "sourceRoot": "projects/ngx-translotus/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ngx-translotus/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-translotus/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngx-translotus/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngx-translotus/src/test.ts",
+            "tsConfig": "projects/ngx-translotus/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-translotus/karma.conf.js"
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "ngx-translotus"
 }
