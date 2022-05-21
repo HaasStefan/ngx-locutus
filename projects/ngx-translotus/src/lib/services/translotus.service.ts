@@ -6,7 +6,14 @@ import { State } from '../state/state.model';
 import { Translation, TranslotusState } from '../state/translotus-state.model';
 
 const INITIAL_STATE: TranslotusState = {
-  translations: [],
+  translations: [
+    {
+      scope: 'shared',
+      translations: {
+        abc: "Übersetzung funktioniert"
+      }
+    }
+  ],
   configurations: [],
   defaultLanguage: 'en',
   activeLanguage: 'en'

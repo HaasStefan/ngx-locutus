@@ -8,8 +8,10 @@ import { Component, OnInit } from '@angular/core';
     </p>
 
     <ng-container *translotus="let t of 'shared'">
-      t.abc: {{t.abc}}
+      {{t.abc}}
     </ng-container>
+    <br>
+    {{ 'abc' | translotus:'shared' | async }}
   `,
   styles: [
   ]

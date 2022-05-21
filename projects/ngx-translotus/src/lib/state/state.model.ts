@@ -1,5 +1,6 @@
 // State Management from here:
 // https://dev.to/angular/simple-yet-powerful-state-management-in-angular-with-rxjs-4f8g
+// Shoutout to Florian Spier for this cool solution!
 
 import { BehaviorSubject, distinctUntilChanged, map, Observable } from 'rxjs';
 
@@ -28,9 +29,5 @@ export class State<T> {
       ...this.state,
       ...newState,
     });
-  }
-
-  public clearState() {
-    this.setState(this.initialState);
   }
 }
