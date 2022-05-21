@@ -15,7 +15,7 @@ const INITIAL_STATE: TranslotusState = {
 @Injectable({
   providedIn: 'root'
 })
-export class TranslotusServic extends State<TranslotusState> {
+export class TranslotusService extends State<TranslotusState> {
   translations$: Observable<Translation[]> = this.select(state => state.translations).pipe(
     shareReplay({ refCount: true, bufferSize: 1 })
   );
