@@ -1,7 +1,8 @@
 {
   "name": "ngx-locutus",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "The alternative internationalization (i18n) library for Angular",
+  "license": "MIT",
   "keywords": [
     "angular",
     "i18n",
