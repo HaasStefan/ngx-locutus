@@ -12,8 +12,8 @@ import { Observable } from 'rxjs';
 })
 export class LocutusService implements OnDestroy {
   activeLanguage$ = new BehaviorSubject<Language | null>(null);
-  translations$ = new BehaviorSubject<Translation[]>([]);
-  actionLog$ = new BehaviorSubject<{ type: 'languageChanged' | 'registeredChild' | 'registeredRoot' | 'translationAdded' } | null>(null);
+  private translations$ = new BehaviorSubject<Translation[]>([]);
+  private actionLog$ = new BehaviorSubject<{ type: 'languageChanged' | 'registeredChild' | 'registeredRoot' | 'translationAdded' } | null>(null);
   private subscription = new Subscription();
   private activeLanguage: Language | null = null;
   private translations: Translation[] = [];
@@ -55,12 +55,25 @@ export class LocutusService implements OnDestroy {
     );
   }
 
-  translate(scope: string, key: string): string | null {
-    const scopeIndex = this.translations.findIndex(x => x.scope === scope);
-    if (scopeIndex < 0) return null;
+  translate(scope: string, key: string): Observable<string> {
+    return this.getTranslations(scope).pipe(
+      map(translations => {
+        if (!translations) return EMPTY;
+        if (!translations[key]) return EMPTY;
 
-    const translation = this.translations[scopeIndex].translations[key];
-    return translation;
+        return translations[key];
+      })
+    )
+  }
+
+  instant(scope: string, key: string): string {
+    const scopeIndex = this.translations.findIndex(x => x.scope === scope);
+    if (scopeIndex < 0)
+      throw { name: 'TranslationNotFoundError', message: `Translation with scope=${scope} not found!`};
+    if (!this.translations[scopeIndex].translations[key])
+      throw { name: 'TranslationNotFoundError', message: `Translation with scope=${scope} and key=${key} not found!`};
+
+    return this.translations[scopeIndex].translations[key];
   }
 
   registerRoot<T>(config: TranslationConfiguration<T> & { language: Language }) {

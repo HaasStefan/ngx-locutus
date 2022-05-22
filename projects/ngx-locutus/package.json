@@ -1,6 +1,22 @@
 {
   "name": "ngx-locutus",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "description": "The alternative internationalization (i18n) library for Angular",
+  "keywords": [
+    "angular",
+    "i18n",
+    "translate",
+    "locutus",
+    "ngx-locutus"
+  ],
+  "author": {
+    "name": "Stefan Haas",
+    "email": "stefan.haas.privat@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HaasStefan/ngx-locutus.git"
+  },
   "peerDependencies": {
     "@angular/common": "^13.2.0",
     "@angular/core": "^13.2.0"

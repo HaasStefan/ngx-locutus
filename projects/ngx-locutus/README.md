@@ -1,24 +1,101 @@
-# ngx-locutus
+# NGX Locutus
+- The alternative **Angular Translation Library** used for large scale microfrontend translations. 
+- No more worrying about shared translation assets.
+- Truly independent translations. 
+- Lazy loaded translations.
+- Scopes by default.
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.2.0.
+## Demo
+For a quick demo, please have a look at the GitHub repository: https://github.com/HaasStefan/ngx-locutus
+A project named demo is inside the projects folder which should explain the most basic concepts.
 
-## Code scaffolding
+## Installation
 
-Run `ng generate component component-name --project ngx-locutus` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project ngx-locutus`.
-> Note: Don't forget to add `--project ngx-locutus` or else it will be added to the default project in your `angular.json` file. 
+    npm install ngx-locutus --save
 
-## Build
+## Usage
 
-Run `ng build ngx-locutus` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Publishing
+### Translation files
+Locutus uses Typescript constants as translation files. It is suggested to create an interface definition for each translation and let the explicit translation constant be of the interface type. 
 
-After building your library with `ng build ngx-locutus`, go to the dist folder `cd dist/ngx-locutus` and run `npm publish`.
+Suggested file structure:
 
-## Running unit tests
+|--assets
 
-Run `ng test ngx-locutus` to execute the unit tests via [Karma](https://karma-runner.github.io).
+|----i18n
 
-## Further help
+|------scope1
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+|--------en.ts
+
+|--------de.ts
+
+|--------scope1.ts
+
+scope1.ts includes the interface definition for the translation object and also defines an array of TranslationLoaders. It is of big importance that the loaders do reference the translation files in a hardcoded manner such that the files will not be tree-shaken. 
+
+    export const Scope1Loaders: TranslationLoader<Scope1>[] = [
+      { de: () => from(import('./de').then(t => t.DE)) },
+      { en: () => from(import('./en').then(t => t.EN)) }
+    ];
+
+
+### Import LocutusModule
+
+Call forRoot() in your AppModule and forChild in each feature module. 
+- **forRoot** needs a TranslationConfiguration consisting of the scope-name, translation-loaders and the active language
+- **forChild** needs a TranslationConfiguration consisting of the scope-name, translation-loaders 
+
+AppModule Import:
+
+     LocutusModule.forRoot({
+      loaders: Scope1Loaders,
+      scope: 'scope1',
+      language: 'de'
+    })
+Feature Module Import:
+
+    LocutusModule.forChild({
+      scope: 'picard',
+      loaders: PicardLoaders
+    })
+
+
+### Translation API
+Use the locutus **directive** to make translations in your template:
+
+    <ng-container *locutus="let t of 'scope1'">
+      {{t.title}}
+    </ng-container>
+
+Or use the **pipe**:
+
+    {{ 'title' | locutus:'scope1' | async }}
+
+Or in the **code** using the LocutusService:
+
+To retrieve a specific key in a scope:
+
+    this.title$ = this.locutus.translate('scope1', 'title');
+To retrieve an entire scope:
+
+    this.scope1$ = this.locutus.getTranslations('scope1');
+
+### Lazy Loaded Modules
+If you have a lazy loaded module, please make sure that you define the LazyLocutusGuard on the route. Since the translation configurations are registered using APP_INITIALIZER, which is only called once when the application is bootstrapped, you will have to use the guard to register the translation configuration specified in the forChild method.
+
+    imports: [
+      CommonModule,
+      RouterModule.forChild([
+        {
+          path:  '',
+          canActivate: [LazyLocutusGuard],
+          component:  PicardComponent
+        }
+      ]),
+      LocutusModule.forChild({
+        scope:  'picard',
+        loaders:  PicardLoaders
+      })
+    ]
