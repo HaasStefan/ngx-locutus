@@ -4,11 +4,16 @@
 - Truly independent translations. 
 - Lazy loaded translations.
 - Scopes by default.
-- 
+
 
 ## Installation
 
     npm install ngx-locutus --save
+
+
+## Demo
+
+Please have a look into the projects folder, where you can find 'demo', a minimal example schowing off the basic funcitonalities of ngx-locutus.
 
 ## Usage
 
