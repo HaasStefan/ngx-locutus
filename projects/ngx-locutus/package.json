@@ -1,14 +1,21 @@
 {
   "name": "ngx-locutus",
   "version": "0.0.1",
-  "description": "General purpose Angular translation library made with microfrontend-architecture in mind.",
+  "description": "The alternative internationalization (i18n) library for Angular",
+  "keywords": [
+    "angular",
+    "i18n",
+    "translate",
+    "locutus",
+    "ngx-locutus"
+  ],
   "author": {
     "name": "Stefan Haas",
     "email": "stefan.haas.privat@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/HaasStefan/ngx-locutus"
+    "url": "https://github.com/HaasStefan/ngx-locutus.git"
   },
   "peerDependencies": {
     "@angular/common": "^13.2.0",
