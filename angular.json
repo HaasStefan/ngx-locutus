@@ -3,23 +3,23 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ngx-translotus": {
+    "ngx-locutus": {
       "projectType": "library",
-      "root": "projects/ngx-translotus",
-      "sourceRoot": "projects/ngx-translotus/src",
+      "root": "projects/ngx-locutus",
+      "sourceRoot": "projects/ngx-locutus/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/ngx-translotus/ng-package.json"
+            "project": "projects/ngx-locutus/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/ngx-translotus/tsconfig.lib.prod.json"
+              "tsConfig": "projects/ngx-locutus/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/ngx-translotus/tsconfig.lib.json"
+              "tsConfig": "projects/ngx-locutus/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -27,14 +27,14 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/ngx-translotus/src/test.ts",
-            "tsConfig": "projects/ngx-translotus/tsconfig.spec.json",
-            "karmaConfig": "projects/ngx-translotus/karma.conf.js"
+            "main": "projects/ngx-locutus/src/test.ts",
+            "tsConfig": "projects/ngx-locutus/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-locutus/karma.conf.js"
           }
         }
       }
     },
-    "show-case": {
+    "demo": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -44,25 +44,25 @@
           "strict": true
         }
       },
-      "root": "projects/show-case",
-      "sourceRoot": "projects/show-case/src",
+      "root": "projects/demo",
+      "sourceRoot": "projects/demo/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/show-case",
-            "index": "projects/show-case/src/index.html",
-            "main": "projects/show-case/src/main.ts",
-            "polyfills": "projects/show-case/src/polyfills.ts",
-            "tsConfig": "projects/show-case/tsconfig.app.json",
+            "outputPath": "dist/demo",
+            "index": "projects/demo/src/index.html",
+            "main": "projects/demo/src/main.ts",
+            "polyfills": "projects/demo/src/polyfills.ts",
+            "tsConfig": "projects/demo/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "projects/show-case/src/favicon.ico",
-              "projects/show-case/src/assets"
+              "projects/demo/src/favicon.ico",
+              "projects/demo/src/assets"
             ],
             "styles": [
-              "projects/show-case/src/styles.scss"
+              "projects/demo/src/styles.scss"
             ],
             "scripts": []
           },
@@ -82,8 +82,8 @@
               ],
               "fileReplacements": [
                 {
-                  "replace": "projects/show-case/src/environments/environment.ts",
-                  "with": "projects/show-case/src/environments/environment.prod.ts"
+                  "replace": "projects/demo/src/environments/environment.ts",
+                  "with": "projects/demo/src/environments/environment.prod.ts"
                 }
               ],
               "outputHashing": "all"
@@ -103,10 +103,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "show-case:build:production"
+              "browserTarget": "demo:build:production"
             },
             "development": {
-              "browserTarget": "show-case:build:development"
+              "browserTarget": "demo:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -114,23 +114,23 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "show-case:build"
+            "browserTarget": "demo:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/show-case/src/test.ts",
-            "polyfills": "projects/show-case/src/polyfills.ts",
-            "tsConfig": "projects/show-case/tsconfig.spec.json",
-            "karmaConfig": "projects/show-case/karma.conf.js",
+            "main": "projects/demo/src/test.ts",
+            "polyfills": "projects/demo/src/polyfills.ts",
+            "tsConfig": "projects/demo/tsconfig.spec.json",
+            "karmaConfig": "projects/demo/karma.conf.js",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "projects/show-case/src/favicon.ico",
-              "projects/show-case/src/assets"
+              "projects/demo/src/favicon.ico",
+              "projects/demo/src/assets"
             ],
             "styles": [
-              "projects/show-case/src/styles.scss"
+              "projects/demo/src/styles.scss"
             ],
             "scripts": []
           }
@@ -138,5 +138,5 @@
       }
     }
   },
-  "defaultProject": "ngx-translotus"
+  "defaultProject": "ngx-locutus"
 }

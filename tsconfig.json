@@ -12,9 +12,9 @@
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "paths": {
-      "ngx-translotus": [
-        "dist/ngx-translotus/ngx-translotus",
-        "dist/ngx-translotus"
+      "ngx-locutus": [
+        "dist/ngx-locutus/ngx-locutus",
+        "dist/ngx-locutus"
       ]
     },
     "declaration": false,
