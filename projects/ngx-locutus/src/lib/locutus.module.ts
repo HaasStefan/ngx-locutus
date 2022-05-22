@@ -4,6 +4,7 @@ import { LocutusDirective } from './directives/locutus.directive';
 import { LocutussPipe } from './pipes/locutus.pipe';
 import { Language, TranslationConfiguration } from '../public-api';
 import { LocutusService } from './services/locutus.service';
+import { LazyLocutusGuard } from './guards/lazy-locutus.guard';
 
 export const TRANSLATION_CONFIGURATION = new InjectionToken<TranslationConfiguration<any>>('');
 
@@ -24,7 +25,7 @@ function initializeAppFactory(config: TranslationConfiguration<any> & { language
 @NgModule({
   declarations: [
     LocutusDirective,
-    LocutussPipe
+    LocutussPipe,
   ],
   imports: [
     CommonModule
@@ -35,6 +36,8 @@ function initializeAppFactory(config: TranslationConfiguration<any> & { language
   ]
 })
 export class LocutusModule {
+
+  constructor() {}
 
   static forRoot<T>(config: TranslationConfiguration<T> & { language: Language }): ModuleWithProviders<LocutusModule> {
     return {
@@ -64,6 +67,10 @@ export class LocutusModule {
         {
           provide: TRANSLATION_CONFIGURATION,
           useValue: config,
+        },
+        {
+          provide: LazyLocutusGuard,
+          deps: [TRANSLATION_CONFIGURATION, LocutusService]
         },
         {
           provide: APP_INITIALIZER,

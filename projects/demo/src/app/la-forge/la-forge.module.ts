@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PicardComponent } from './picard.component';
-import { PicardLoaders } from '../../assets/i18n/picard/picard';
-import { RouterModule } from '@angular/router';
+import { LaForgeComponent } from './la-forge.component';
 import { LazyLocutusGuard, LocutusModule } from 'projects/ngx-locutus/src/public-api';
+import { LaForgeLoaders } from '../../assets/i18n/la-forge/la-forge';
+import { RouterModule } from '@angular/router';
+
 
 
 @NgModule({
   declarations: [
-    PicardComponent
+    LaForgeComponent
   ],
   imports: [
     CommonModule,
@@ -16,13 +17,13 @@ import { LazyLocutusGuard, LocutusModule } from 'projects/ngx-locutus/src/public
       {
         path: '',
         canActivate: [LazyLocutusGuard],
-        component: PicardComponent
-      },
+        component: LaForgeComponent
+      }
     ]),
     LocutusModule.forChild({
-      scope: 'picard',
-      loaders: PicardLoaders
+      scope: 'laForge',
+      loaders: LaForgeLoaders
     })
   ]
 })
-export class PicardModule { }
+export class LaForgeModule { }

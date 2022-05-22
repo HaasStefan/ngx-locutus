@@ -5,7 +5,7 @@ import { LocutusService } from '../services/locutus.service';
 @Directive({
   selector: '[locutus]'
 })
-export class LocutusDirective implements OnDestroy {
+export class LocutusDirective<T> implements OnDestroy {
   subscription = new Subscription();
 
   @Input()

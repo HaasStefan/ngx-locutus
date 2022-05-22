@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, OnInit } from '@angular/core';
 import { Language } from '../models/languages.model';
 import { TranslationConfiguration } from '../models/translation-configuration.model';
 import { EMPTY, map, of, Subscription, switchMap, tap } from 'rxjs';
@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
 export class LocutusService implements OnDestroy {
   activeLanguage$ = new BehaviorSubject<Language | null>(null);
   translations$ = new BehaviorSubject<Translation[]>([]);
-  stateChange = new BehaviorSubject<{ type: 'languageChange' | 'registerChild' | 'registerRoot' } | null>(null);
+  actionLog$ = new BehaviorSubject<{ type: 'languageChanged' | 'registeredChild' | 'registeredRoot' | 'translationAdded' } | null>(null);
   private subscription = new Subscription();
   private activeLanguage: Language | null = null;
   private translations: Translation[] = [];
@@ -24,15 +24,15 @@ export class LocutusService implements OnDestroy {
   }
 
   setActiveLanguage(lang: Language) {
+    console.log(this.translations)
     if (this.activeLanguage === lang) {
       console.warn(`Language: ${lang} is already the active language.`);
       return;
     }
-
     this.loadAllTranslations(this.configurations, lang).subscribe(_ => {
       this.activeLanguage = lang;
       this.activeLanguage$.next(this.activeLanguage);
-      this.stateChange.next({ type: 'languageChange' });
+      this.actionLog$.next({ type: 'languageChanged' });
     });
   }
 
@@ -41,11 +41,12 @@ export class LocutusService implements OnDestroy {
   }
 
   getTranslations(scope: string): Observable<any> {
-    return this.stateChange.pipe(
+    return this.actionLog$.pipe(
       map(change => {
         if (!change) return EMPTY;
 
-        const index = this.translations.findIndex(x => x.scope === scope && x.language === this.activeLanguage);
+        const index = this.translations.findIndex(
+          x => x.scope === scope && x.language === this.activeLanguage);
         if (index < 0) return EMPTY;
 
         return of(this.translations[index].translations);
@@ -73,7 +74,7 @@ export class LocutusService implements OnDestroy {
         _ => {
           this.activeLanguage = config.language;
           this.activeLanguage$.next(this.activeLanguage);
-          this.stateChange.next({ type: 'registerRoot' });
+          this.actionLog$.next({ type: 'registeredRoot' });
         }
       )
     );
@@ -86,8 +87,8 @@ export class LocutusService implements OnDestroy {
     ];
 
     this.subscription.add(
-      this.loadAllTranslations(this.configurations, this.activeLanguage as Language).subscribe(
-        _ => this.stateChange.next({ type: 'registerChild' })
+      this.loadAllTranslations([...this.configurations], this.activeLanguage as Language).subscribe(
+        _ => this.actionLog$.next({ type: 'registeredChild' })
       )
     );
   }
@@ -119,6 +120,7 @@ export class LocutusService implements OnDestroy {
             }
           ];
           this.translations$.next(this.translations);
+          this.actionLog$.next({ type: 'translationAdded' });
         })
       );
   }
