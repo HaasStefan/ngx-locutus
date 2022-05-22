@@ -1,6 +1,15 @@
 {
   "name": "ngx-locutus",
   "version": "0.0.1",
+  "description": "General purpose Angular translation library made with microfrontend-architecture in mind.",
+  "author": {
+    "name": "Stefan Haas",
+    "email": "stefan.haas.privat@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HaasStefan/ngx-locutus"
+  },
   "peerDependencies": {
     "@angular/common": "^13.2.0",
     "@angular/core": "^13.2.0"
