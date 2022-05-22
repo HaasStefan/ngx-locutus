@@ -2,11 +2,12 @@ import { APP_INITIALIZER, InjectionToken, ModuleWithProviders, NgModule } from '
 import { CommonModule } from '@angular/common';
 import { LocutusDirective } from './directives/locutus.directive';
 import { LocutussPipe } from './pipes/locutus.pipe';
-import { Language, TranslationConfiguration } from '../public-api';
 import { LocutusService } from './services/locutus.service';
 import { LazyLocutusGuard } from './guards/lazy-locutus.guard';
+import { TranslationConfiguration } from './models/translation-configuration.model';
+import { Language } from './models/languages.model';
+import { TRANSLATION_CONFIGURATION } from './injection-tokens';
 
-export const TRANSLATION_CONFIGURATION = new InjectionToken<TranslationConfiguration<any>>('');
 
 function initializeAppFactory(config: TranslationConfiguration<any> & { language: Language }, locutus: LocutusService): () => void {
   return () => {

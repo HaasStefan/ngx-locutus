@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanLoad, Route, RouterStateSnapshot, UrlSegment, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { TRANSLATION_CONFIGURATION } from '../locutus.module';
+import { TRANSLATION_CONFIGURATION } from '../injection-tokens';
 import { TranslationConfiguration } from '../models/translation-configuration.model';
 import { LocutusService } from '../services/locutus.service';
 
