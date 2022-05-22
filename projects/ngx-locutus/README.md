@@ -22,10 +22,15 @@ Locutus uses Typescript constants as translation files. It is suggested to creat
 Suggested file structure:
 
 |--assets
+
 |----i18n
+
 |------scope1
+
 |--------en.ts
+
 |--------de.ts
+
 |--------scope1.ts
 
 scope1.ts includes the interface definition for the translation object and also defines an array of TranslationLoaders. It is of big importance that the loaders do reference the translation files in a hardcoded manner such that the files will not be tree-shaken. 
