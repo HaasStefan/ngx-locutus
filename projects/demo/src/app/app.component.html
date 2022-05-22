@@ -1,5 +1,25 @@
 
-Locutus Demo Application
+<h1>Locutus Demo</h1>
 
+<button (click)="changeLang()">Change Language</button>
 
-<lib-ngx-locutus></lib-ngx-locutus>
+<br>
+<br>
+
+<h4>Locutus Directive:</h4>
+<ng-container *locutus="let t of 'scope1'">
+  {{t.title}}
+</ng-container>
+
+<br>
+<br>
+
+<h4>Locutus Pipe:</h4>
+{{ 'message' | locutus:'scope1' | async }}
+
+<br>
+<br>
+
+<h3>Picard Module: </h3>
+<router-outlet>
+</router-outlet>
