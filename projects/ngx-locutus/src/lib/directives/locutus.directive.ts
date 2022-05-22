@@ -1,19 +1,19 @@
-import { Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, Input, OnDestroy, TemplateRef, ViewContainerRef } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { TranslotusService } from '../services/translotus.service';
+import { LocutusService } from '../services/locutus.service';
 
 @Directive({
-  selector: '[translotus]'
+  selector: '[locutus]'
 })
-export class TranslotusDirective implements OnDestroy {
+export class LocutusDirective implements OnDestroy {
   subscription = new Subscription();
 
   @Input()
-  set translotusOf(scope: string) {
+  set locutusOf(scope: string) {
     this.view.clear();
 
     this.subscription.add(
-      this.translotus.getTranslations(scope).subscribe(translations => {
+      this.locutus.getTranslations(scope).subscribe(translations => {
         this.view.createEmbeddedView(this.template, {
           $implicit: translations
         });
@@ -22,7 +22,7 @@ export class TranslotusDirective implements OnDestroy {
   }
 
   constructor(
-    private translotus: TranslotusService,
+    private locutus: LocutusService,
     private view: ViewContainerRef,
     private template: TemplateRef<any>
   ) { }

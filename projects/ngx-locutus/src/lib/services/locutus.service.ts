@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { EMPTY } from 'rxjs';
-import { Observable, shareReplay } from 'rxjs';
+import { EMPTY, Observable, shareReplay } from 'rxjs';
 import { Language } from '../models/languages.model';
 import { State } from '../state/state.model';
-import { Translation, TranslotusState } from '../state/translotus-state.model';
+import { Translation, LocutusState } from '../state/locutus-state.model';
 
-const INITIAL_STATE: TranslotusState = {
+const INITIAL_STATE: LocutusState = {
   translations: [
     {
       scope: 'shared',
@@ -22,7 +21,7 @@ const INITIAL_STATE: TranslotusState = {
 @Injectable({
   providedIn: 'root'
 })
-export class TranslotusService extends State<TranslotusState> {
+export class LocutusService extends State<LocutusState> {
   translations$: Observable<Translation[]> = this.select(state => state.translations).pipe(
     shareReplay({ refCount: true, bufferSize: 1 })
   );

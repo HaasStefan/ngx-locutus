@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TranslotusModule } from 'projects/ngx-translotus/src/lib/translotus.module';
+import { LocutusModule } from 'projects/ngx-locutus/src/public-api';
 
 import { AppComponent } from './app.component';
 
@@ -10,7 +10,7 @@ import { AppComponent } from './app.component';
   ],
   imports: [
     BrowserModule,
-    TranslotusModule
+    LocutusModule
   ],
   providers: [],
   bootstrap: [AppComponent]

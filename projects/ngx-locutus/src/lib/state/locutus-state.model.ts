@@ -1,7 +1,7 @@
 import { Language } from "../models/languages.model"
 import { TranslationConfiguration } from "../models/translation-configuration.model"
 
-export interface TranslotusState {
+export interface LocutusState {
   translations: Translation[],
   configurations: TranslationConfiguration<any>[],
   defaultLanguage: Language,

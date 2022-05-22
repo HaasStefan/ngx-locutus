@@ -1,22 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'lib-ngx-translotus',
+  selector: 'lib-ngx-locutus',
   template: `
     <p>
-      ngx-translotus works!
+      ngx-locutus works!
     </p>
 
-    <ng-container *translotus="let t of 'shared'">
+    <ng-container *locutus="let t of 'shared'">
       {{t.abc}}
     </ng-container>
     <br>
-    {{ 'abc' | translotus:'shared' | async }}
+    {{ 'abc' | locutus:'shared' | async }}
   `,
   styles: [
   ]
 })
-export class NgxTranslotusComponent implements OnInit {
+export class NgxLocutusComponent implements OnInit {
 
   constructor() { }
 
