@@ -13,4 +13,4 @@ export interface Scope1 {
 export const Scope1Loaders: TranslationLoader<Scope1>[] = [
   { de: () => from(import('./de').then(t => t.DE)) },
   { en: () => from(import('./en').then(t => t.EN)) }
-]
+];
