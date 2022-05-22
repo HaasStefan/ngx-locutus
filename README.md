@@ -1,29 +1,93 @@
+# NGX Locutus
+- The alternative **Angular Translation Library** used for large scale microfrontend translations. 
+- No more worrying about shared translation assets.
+- Truly independent translations. 
+- Lazy loaded translations.
+- Scopes by default.
+- 
 
-# ngx-locutus
+## Installation
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.2.2.
+    npm install ngx-locutus --save
 
-## Development server
+## Usage
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
+### Translation files
+Locutus uses Typescript constants as translation files. It is suggested to create an interface definition for each translation and let the explicit translation constant be of the interface type. 
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Suggested file structure:
 
-## Build
+|--assets
+|----i18n
+|------scope1
+|--------en.ts
+|--------de.ts
+|--------scope1.ts
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+scope1.ts includes the interface definition for the translation object and also defines an array of TranslationLoaders. It is of big importance that the loaders do reference the translation files in a hardcoded manner such that the files will not be tree-shaken. 
 
-## Running unit tests
+    export const Scope1Loaders: TranslationLoader<Scope1>[] = [
+      { de: () => from(import('./de').then(t => t.DE)) },
+      { en: () => from(import('./en').then(t => t.EN)) }
+    ];
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Running end-to-end tests
+### Import LocutusModule
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Call forRoot() in your AppModule and forChild in each feature module. 
+- **forRoot** needs a TranslationConfiguration consisting of the scope-name, translation-loaders and the active language
+- **forChild** needs a TranslationConfiguration consisting of the scope-name, translation-loaders 
 
-## Further help
+AppModule Import:
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+     LocutusModule.forRoot({
+      loaders: Scope1Loaders,
+      scope: 'scope1',
+      language: 'de'
+    })
+Feature Module Import:
 
+    LocutusModule.forChild({
+      scope: 'picard',
+      loaders: PicardLoaders
+    })
+
+
+### Translation API
+Use the locutus **directive** to make translations in your template:
+
+    <ng-container *locutus="let t of 'scope1'">
+      {{t.title}}
+    </ng-container>
+
+Or use the **pipe**:
+
+    {{ 'title' | locutus:'scope1' | async }}
+
+Or in the **code** using the LocutusService:
+
+To retrieve a specific key in a scope:
+
+    this.title$ = this.locutus.translate('scope1', 'title');
+To retrieve an entire scope:
+
+    this.scope1$ = this.locutus.getTranslations('scope1');
+
+### Lazy Loaded Modules
+If you have a lazy loaded module, please make sure that you define the LazyLocutusGuard on the route. Since the translation configurations are registered using APP_INITIALIZER, which is only called once when the application is bootstrapped, you will have to use the guard to register the translation configuration specified in the forChild method.
+
+    imports: [
+      CommonModule,
+      RouterModule.forChild([
+        {
+          path:  '',
+          canActivate: [LazyLocutusGuard],
+          component:  PicardComponent
+        }
+      ]),
+      LocutusModule.forChild({
+        scope:  'picard',
+        loaders:  PicardLoaders
+      })
+    ]

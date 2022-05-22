@@ -11,7 +11,7 @@ A project named demo is inside the projects folder which should explain the most
 
 ## Installation
 
-    npm install @ngx-locutus --save
+    npm install ngx-locutus --save
 
 ## Usage
 
