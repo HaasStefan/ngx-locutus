@@ -1,7 +1,17 @@
+<br>
+LaForge2:<br>
+<ng-container *locutus="let t of 'laForge2'">
+  Name: {{t.name}} <br>
+  Interest: {{t.interest}} <br>
+</ng-container>
 
+<br>
 LaForge:<br>
 <ng-container *locutus="let t of 'laForge'">
   Name: {{t.name}} <br>
   Interest: {{t.interest}} <br>
 </ng-container>
-Nested: {{ 'nested.test' | locutus:'laForge' | async }}
+Nested: {{ 'nested.test' | locutus:'laForge2' | async }}
+
+<br>
+-----------------

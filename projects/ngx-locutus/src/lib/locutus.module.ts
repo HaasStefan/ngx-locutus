@@ -64,9 +64,7 @@ export class LocutusModule {
   }
 
   static forChild(configs: TranslationConfiguration[]): ModuleWithProviders<LocutusModule> {
-    configs.forEach(config => {
-      registrationQueue$.next(config);
-    });
+      registrationQueue$.next(configs);
 
     return {
       ngModule: LocutusModule,

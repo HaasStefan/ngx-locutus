@@ -44,13 +44,11 @@ export class LocutusService implements OnDestroy {
   }
 
   getTranslations(scope: string): Observable<any> {
-    return this.actionLog$.pipe(
-      map(change => {
-        if (!change) return EMPTY;
-
+    return this.translations$.pipe(
+      map(_ => {
         const index = this.translations.findIndex(
           x => x.scope === scope && x.language === this.activeLanguage);
-        if (index < 0) return EMPTY;
+        if (index < 0) return of(null);
 
         return of(this.translations[index].translations);
       }),

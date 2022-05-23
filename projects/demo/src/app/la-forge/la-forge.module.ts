@@ -22,6 +22,10 @@ import { RouterModule } from '@angular/router';
       {
         scope: 'laForge',
         loaders: LaForgeLoaders
+      },
+      {
+        scope: 'laForge2',
+        loaders: LaForgeLoaders
       }
     ])
   ],
