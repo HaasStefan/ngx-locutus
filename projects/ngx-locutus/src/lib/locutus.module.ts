@@ -6,6 +6,9 @@ import { LocutusService } from './services/locutus.service';
 import { LazyLocutusGuard } from './guards/lazy-locutus.guard';
 import { RootTranslationConfiguration, TranslationConfiguration } from './models/translation-configuration.model';
 import { TRANSLATION_CONFIGURATIONS } from './injection-tokens';
+import { BehaviorSubject } from 'rxjs';
+import { RegistrationService } from './services/registration.service';
+import { registrationQueue$ } from './models/registration-queue.model';
 
 
 function initializeAppFactory(configs: (TranslationConfiguration | RootTranslationConfiguration)[], locutus: LocutusService): () => void {
@@ -39,7 +42,7 @@ function initializeAppFactory(configs: (TranslationConfiguration | RootTranslati
 })
 export class LocutusModule {
 
-  constructor() {}
+  constructor(private registration: RegistrationService) {}
 
   static forRoot(configs: (TranslationConfiguration | RootTranslationConfiguration)[]): ModuleWithProviders<LocutusModule> {
     return {
@@ -63,26 +66,13 @@ export class LocutusModule {
   }
 
   static forChild(configs: TranslationConfiguration[]): ModuleWithProviders<LocutusModule> {
+    configs.forEach(config => {
+      registrationQueue$.next(config);
+    });
+
     return {
       ngModule: LocutusModule,
       providers: [
-        {
-          provide: TRANSLATION_CONFIGURATIONS,
-          useValue: configs,
-        },
-        {
-          provide: LazyLocutusGuard,
-          deps: [TRANSLATION_CONFIGURATIONS, LocutusService]
-        },
-        {
-          provide: APP_INITIALIZER,
-          useFactory: initializeAppFactory,
-          deps: [
-            TRANSLATION_CONFIGURATIONS,
-            LocutusService
-          ],
-          multi: true
-        },
       ]
     };
   }
