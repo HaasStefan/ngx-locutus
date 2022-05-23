@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
 
-export interface TranslationLoader<T> {
-  [key: string]: () => Observable<T>;
+export interface TranslationLoader {
+  [key: string]: () => Observable<any>;
 };

@@ -4,6 +4,7 @@ import { PicardComponent } from './picard.component';
 import { PicardLoaders } from '../../assets/i18n/picard/picard';
 import { RouterModule } from '@angular/router';
 import { LazyLocutusGuard, LocutusModule } from 'projects/ngx-locutus/src/public-api';
+import { TroiLoaders } from '../../assets/i18n/troi/troi';
 
 
 @NgModule({
@@ -19,10 +20,16 @@ import { LazyLocutusGuard, LocutusModule } from 'projects/ngx-locutus/src/public
         component: PicardComponent
       },
     ]),
-    LocutusModule.forChild({
-      scope: 'picard',
-      loaders: PicardLoaders
-    })
+    LocutusModule.forChild([
+      {
+        scope: 'picard',
+        loaders: PicardLoaders
+      },
+      {
+        scope: 'troi',
+        loaders: TroiLoaders
+      }
+    ])
   ]
 })
 export class PicardModule { }

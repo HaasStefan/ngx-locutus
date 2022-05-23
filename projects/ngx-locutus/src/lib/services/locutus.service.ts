@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy, OnInit } from '@angular/core';
 import { Language } from '../models/languages.model';
-import { TranslationConfiguration } from '../models/translation-configuration.model';
+import { RootTranslationConfiguration, TranslationConfiguration } from '../models/translation-configuration.model';
 import { EMPTY, map, of, Subscription, switchMap, tap } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { Translation } from '../models/translation.model';
@@ -17,14 +17,13 @@ export class LocutusService implements OnDestroy {
   private subscription = new Subscription();
   private activeLanguage: Language | null = null;
   private translations: Translation[] = [];
-  private configurations: TranslationConfiguration<any>[] = [];
+  private configurations: TranslationConfiguration[] = [];
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
   setActiveLanguage(lang: Language) {
-    console.log(this.translations)
     if (this.activeLanguage === lang) {
       console.warn(`Language: ${lang} is already the active language.`);
       return;
@@ -76,7 +75,7 @@ export class LocutusService implements OnDestroy {
     return this.translations[scopeIndex].translations[key];
   }
 
-  registerRoot<T>(config: TranslationConfiguration<T> & { language: Language }) {
+  registerRoot(config: RootTranslationConfiguration) {
     this.configurations = [
       ...this.configurations,
       config
@@ -93,7 +92,7 @@ export class LocutusService implements OnDestroy {
     );
   }
 
-  registerChild<T>(config: TranslationConfiguration<T>) {
+  registerChild<T>(config: TranslationConfiguration) {
     this.configurations = [
       ...this.configurations,
       config
@@ -106,16 +105,16 @@ export class LocutusService implements OnDestroy {
     );
   }
 
-  private loadAllTranslations(configs: TranslationConfiguration<any>[], lang: Language): Observable<any> {
+  private loadAllTranslations(configs: TranslationConfiguration[], lang: Language): Observable<any> {
     let config = configs.shift();
     if (!config) return of(null);
 
     return this.loadAllTranslations(configs, lang).pipe(
-      switchMap(_ => this.loadTranslation(config as TranslationConfiguration<any>, lang))
+      switchMap(_ => this.loadTranslation(config as TranslationConfiguration, lang))
     );
   }
 
-  private loadTranslation<T>(config: TranslationConfiguration<T>, lang: Language): Observable<any> {
+  private loadTranslation<T>(config: TranslationConfiguration, lang: Language): Observable<any> {
     if (this.isLoaded(config.scope, lang)) return EMPTY;
 
     const loaderIndex = config.loaders.findIndex(loader => lang in loader);
