@@ -22,11 +22,17 @@ import { AppComponent } from './app.component';
         loadChildren: () => import('./la-forge/la-forge.module').then(m => m.LaForgeModule)
       }
     ]),
-    LocutusModule.forRoot({
-      loaders: Scope1Loaders,
-      scope: 'scope1',
-      language: 'de'
-    })
+    LocutusModule.forRoot([
+      {
+        loaders: Scope1Loaders,
+        scope: 'scope1',
+        language: 'de'
+      },
+      {
+        loaders: Scope1Loaders,
+        scope: 'duplicate'
+      }
+    ])
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,24 +1,25 @@
-import { APP_INITIALIZER, InjectionToken, ModuleWithProviders, NgModule } from '@angular/core';
+import { APP_INITIALIZER, ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LocutusDirective } from './directives/locutus.directive';
 import { LocutussPipe } from './pipes/locutus.pipe';
 import { LocutusService } from './services/locutus.service';
 import { LazyLocutusGuard } from './guards/lazy-locutus.guard';
-import { TranslationConfiguration } from './models/translation-configuration.model';
-import { Language } from './models/languages.model';
-import { TRANSLATION_CONFIGURATION } from './injection-tokens';
+import { RootTranslationConfiguration, TranslationConfiguration } from './models/translation-configuration.model';
+import { TRANSLATION_CONFIGURATIONS } from './injection-tokens';
 
 
-function initializeAppFactory(config: TranslationConfiguration<any> & { language: Language }, locutus: LocutusService): () => void {
+function initializeAppFactory(configs: (TranslationConfiguration | RootTranslationConfiguration)[], locutus: LocutusService): () => void {
   return () => {
-      if (config.language) {
-        locutus.registerRoot(config);
-        return;
-      }
-
-      locutus.registerChild({
-        scope: config.scope,
-        loaders: config.loaders
+      configs.forEach(config => {
+        if (Object.keys(config).includes('language')) {
+          locutus.registerRoot(config as RootTranslationConfiguration);
+        }
+        else {
+          locutus.registerChild({
+            scope: config.scope,
+            loaders: config.loaders
+          });
+        }
       });
   };
 }
@@ -40,19 +41,19 @@ export class LocutusModule {
 
   constructor() {}
 
-  static forRoot<T>(config: TranslationConfiguration<T> & { language: Language }): ModuleWithProviders<LocutusModule> {
+  static forRoot(configs: (TranslationConfiguration | RootTranslationConfiguration)[]): ModuleWithProviders<LocutusModule> {
     return {
       ngModule: LocutusModule,
       providers: [
         {
-          provide: TRANSLATION_CONFIGURATION,
-          useValue: config,
+          provide: TRANSLATION_CONFIGURATIONS,
+          useValue: configs,
         },
         {
           provide: APP_INITIALIZER,
           useFactory: initializeAppFactory,
           deps: [
-            TRANSLATION_CONFIGURATION,
+            TRANSLATION_CONFIGURATIONS,
             LocutusService
           ],
           multi: true
@@ -61,23 +62,23 @@ export class LocutusModule {
     };
   }
 
-  static forChild<T>(config: TranslationConfiguration<T>): ModuleWithProviders<LocutusModule> {
+  static forChild(configs: TranslationConfiguration[]): ModuleWithProviders<LocutusModule> {
     return {
       ngModule: LocutusModule,
       providers: [
         {
-          provide: TRANSLATION_CONFIGURATION,
-          useValue: config,
+          provide: TRANSLATION_CONFIGURATIONS,
+          useValue: configs,
         },
         {
           provide: LazyLocutusGuard,
-          deps: [TRANSLATION_CONFIGURATION, LocutusService]
+          deps: [TRANSLATION_CONFIGURATIONS, LocutusService]
         },
         {
           provide: APP_INITIALIZER,
           useFactory: initializeAppFactory,
           deps: [
-            TRANSLATION_CONFIGURATION,
+            TRANSLATION_CONFIGURATIONS,
             LocutusService
           ],
           multi: true
