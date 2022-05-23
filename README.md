@@ -5,15 +5,13 @@
 - Lazy loaded translations.
 - Scopes by default.
 
+## Demo
+
+A project named demo is inside the projects folder which should explain the most basic concepts.
 
 ## Installation
 
     npm install ngx-locutus --save
-
-
-## Demo
-
-Please have a look into the projects folder, where you can find 'demo', a minimal example schowing off the basic funcitonalities of ngx-locutus.
 
 ## Usage
 
@@ -37,7 +35,7 @@ Suggested file structure:
 
 scope1.ts includes the interface definition for the translation object and also defines an array of TranslationLoaders. It is of big importance that the loaders do reference the translation files in a hardcoded manner such that the files will not be tree-shaken. 
 
-    export const Scope1Loaders: TranslationLoader<Scope1>[] = [
+    export const Scope1Loaders: TranslationLoader[] = [
       { de: () => from(import('./de').then(t => t.DE)) },
       { en: () => from(import('./en').then(t => t.EN)) }
     ];
@@ -51,17 +49,17 @@ Call forRoot() in your AppModule and forChild in each feature module.
 
 AppModule Import:
 
-     LocutusModule.forRoot({
+     LocutusModule.forRoot([{
       loaders: Scope1Loaders,
       scope: 'scope1',
       language: 'de'
-    })
+    }])
 Feature Module Import:
 
-    LocutusModule.forChild({
+    LocutusModule.forChild([{
       scope: 'picard',
       loaders: PicardLoaders
-    })
+    }])
 
 
 ### Translation API
@@ -96,8 +94,8 @@ If you have a lazy loaded module, please make sure that you define the LazyLocut
           component:  PicardComponent
         }
       ]),
-      LocutusModule.forChild({
+      LocutusModule.forChild([{
         scope:  'picard',
         loaders:  PicardLoaders
-      })
+      }])
     ]
