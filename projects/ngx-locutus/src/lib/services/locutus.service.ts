@@ -18,6 +18,8 @@ export class LocutusService implements OnDestroy {
   private activeLanguage: Language | null = null;
   private translations: Translation[] = [];
   private configurations: TranslationConfiguration[] = [];
+  private childConfigQueue: TranslationConfiguration[] = [];
+
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -28,8 +30,10 @@ export class LocutusService implements OnDestroy {
       console.warn(`Language: ${lang} is already the active language.`);
       return;
     }
+
     this.loadAllTranslations(this.configurations, lang).subscribe(_ => {
       this.activeLanguage = lang;
+
       this.activeLanguage$.next(this.activeLanguage);
       this.actionLog$.next({ type: 'languageChanged' });
     });
@@ -87,12 +91,23 @@ export class LocutusService implements OnDestroy {
           this.activeLanguage = config.language;
           this.activeLanguage$.next(this.activeLanguage);
           this.actionLog$.next({ type: 'registeredRoot' });
+
+          this.workQueue();
         }
       )
     );
   }
 
-  registerChild<T>(config: TranslationConfiguration) {
+  registerChild(config: TranslationConfiguration) {
+    if (this.configurations.findIndex(c => c.scope === config.scope) >= 0) return;
+    if (this.translations.findIndex(t => t.scope === config.scope) >= 0) return;
+
+    if (!this.activeLanguage) {
+      // if (this.childConfigQueue.findIndex(c => c.scope === config.scope)) return;
+      this.childConfigQueue = [...this.childConfigQueue, config];
+      return;
+    }
+
     this.configurations = [
       ...this.configurations,
       config
@@ -114,11 +129,11 @@ export class LocutusService implements OnDestroy {
     );
   }
 
-  private loadTranslation<T>(config: TranslationConfiguration, lang: Language): Observable<any> {
-    if (this.isLoaded(config.scope, lang)) return EMPTY;
+  private loadTranslation(config: TranslationConfiguration, lang: Language): Observable<any> {
+    if (this.isLoaded(config.scope, lang)) return of(null);
 
     const loaderIndex = config.loaders.findIndex(loader => lang in loader);
-    if (loaderIndex < 0) return EMPTY;
+    if (loaderIndex < 0) return of(null);
 
     return config.loaders[loaderIndex][lang]()
       .pipe(
@@ -144,5 +159,12 @@ export class LocutusService implements OnDestroy {
 
   private getTranslationIndex(scope: string, lang: Language): number {
     return this.translations.findIndex(t => t.scope === scope && t.language === lang);
+  }
+
+  private workQueue() {
+    this.childConfigQueue.forEach(config => {
+      this.registerChild(config);
+    });
+    this.childConfigQueue = [];
   }
 }

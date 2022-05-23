@@ -6,7 +6,6 @@ import { LaForgeLoaders } from '../../assets/i18n/la-forge/la-forge';
 import { RouterModule } from '@angular/router';
 
 
-
 @NgModule({
   declarations: [
     LaForgeComponent
@@ -26,6 +25,7 @@ import { RouterModule } from '@angular/router';
         loaders: LaForgeLoaders
       }
     ])
-  ]
+  ],
+  exports: [LaForgeComponent]
 })
 export class LaForgeModule { }
