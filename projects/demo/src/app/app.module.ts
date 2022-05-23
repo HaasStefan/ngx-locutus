@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { LazyLocutusGuard, LocutusModule } from 'projects/ngx-locutus/src/public-api';
+import { LocutusModule } from 'projects/ngx-locutus/src/public-api';
 import { Scope1Loaders } from '../assets/i18n/scope1/scope1';
 import { AppComponent } from './app.component';
 import { LaForgeModule } from './la-forge/la-forge.module';

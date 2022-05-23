@@ -3,10 +3,8 @@ import { CommonModule } from '@angular/common';
 import { LocutusDirective } from './directives/locutus.directive';
 import { LocutussPipe } from './pipes/locutus.pipe';
 import { LocutusService } from './services/locutus.service';
-import { LazyLocutusGuard } from './guards/lazy-locutus.guard';
 import { RootTranslationConfiguration, TranslationConfiguration } from './models/translation-configuration.model';
 import { TRANSLATION_CONFIGURATIONS } from './injection-tokens';
-import { BehaviorSubject } from 'rxjs';
 import { RegistrationService } from './services/registration.service';
 import { registrationQueue$ } from './models/registration-queue.model';
 

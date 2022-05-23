@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PicardComponent } from './picard.component';
 import { PicardLoaders } from '../../assets/i18n/picard/picard';
 import { RouterModule } from '@angular/router';
-import { LazyLocutusGuard, LocutusModule } from 'projects/ngx-locutus/src/public-api';
+import { LocutusModule } from 'projects/ngx-locutus/src/public-api';
 import { TroiLoaders } from '../../assets/i18n/troi/troi';
 
 
@@ -16,7 +16,6 @@ import { TroiLoaders } from '../../assets/i18n/troi/troi';
     RouterModule.forChild([
       {
         path: '',
-        canActivate: [LazyLocutusGuard],
         component: PicardComponent
       },
     ]),
