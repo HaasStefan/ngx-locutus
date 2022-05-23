@@ -3,7 +3,10 @@ import { from } from 'rxjs'
 
 export interface LaForge {
   name: string,
-  interest: string
+  interest: string,
+  nested: {
+    test: string
+  }
 }
 
 // the translation files must be referenced hardcoded to avoid them from beeing treeshaken

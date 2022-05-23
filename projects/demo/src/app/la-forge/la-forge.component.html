@@ -2,5 +2,6 @@
 LaForge:<br>
 <ng-container *locutus="let t of 'laForge'">
   Name: {{t.name}} <br>
-  Interest: {{t.interest}}
+  Interest: {{t.interest}} <br>
 </ng-container>
+Nested: {{ 'nested.test' | locutus:'laForge' | async }}
