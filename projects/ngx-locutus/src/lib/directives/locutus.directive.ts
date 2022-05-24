@@ -12,6 +12,7 @@ export class LocutusDirective implements OnDestroy {
   set locutusOf(scope: string) {
     this.subscription.add(
       this.locutus.getTranslations(scope).subscribe(translations => {
+        if (!translations) return;
         this.view.clear();
         this.view.createEmbeddedView(this.template, {
           $implicit: translations

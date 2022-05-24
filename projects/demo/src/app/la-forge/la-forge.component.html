@@ -1,6 +1,22 @@
-
-LaForge:<br>
+<h5>scope: 'laForge'</h5>
 <ng-container *locutus="let t of 'laForge'">
   Name: {{t.name}} <br>
-  Interest: {{t.interest}}
+  Interest: {{t.interest | interpolate:'abc':'def' }} <br>
 </ng-container>
+
+<br>
+{{ 'interest' | locutus:'laForge':'interpolated':'string' | async}}
+<br>
+<h5>scope: 'laForge2'</h5>
+<ng-container *locutus="let t of 'laForge2'">
+  Name: {{t.name}} <br>
+  Interest: {{t.interest}} <br>
+</ng-container>
+Nested: {{ 'nested.test' | locutus:'laForge2' | async }}
+
+<br>
+<button (click)="replace()">replace laForge scope</button>
+
+{{ interest }}
+<br>
+<button (click)="instant()">instant</button>

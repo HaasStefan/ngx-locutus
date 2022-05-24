@@ -1,7 +1,7 @@
-import { Injectable, OnDestroy, OnInit } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Language } from '../models/languages.model';
 import { RootTranslationConfiguration, TranslationConfiguration } from '../models/translation-configuration.model';
-import { EMPTY, map, of, Subscription, switchMap, tap } from 'rxjs';
+import { distinctUntilChanged, EMPTY, map, of, Subscription, switchMap, tap } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { Translation } from '../models/translation.model';
 import { Observable } from 'rxjs';
@@ -13,13 +13,12 @@ import { Observable } from 'rxjs';
 export class LocutusService implements OnDestroy {
   activeLanguage$ = new BehaviorSubject<Language | null>(null);
   private translations$ = new BehaviorSubject<Translation[]>([]);
-  private actionLog$ = new BehaviorSubject<{ type: 'languageChanged' | 'registeredChild' | 'registeredRoot' | 'translationAdded' } | null>(null);
   private subscription = new Subscription();
   private activeLanguage: Language | null = null;
   private translations: Translation[] = [];
   private configurations: TranslationConfiguration[] = [];
   private childConfigQueue: TranslationConfiguration[] = [];
-
+  private readonly interpolationPattern = /{{[^}]*}}/g;
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -31,11 +30,10 @@ export class LocutusService implements OnDestroy {
       return;
     }
 
-    this.loadAllTranslations(this.configurations, lang).subscribe(_ => {
-      this.activeLanguage = lang;
-
-      this.activeLanguage$.next(this.activeLanguage);
-      this.actionLog$.next({ type: 'languageChanged' });
+    this.activeLanguage = lang;
+    this.activeLanguage$.next(this.activeLanguage);
+    this.loadAllTranslations([...this.configurations], lang).subscribe(_ => {
+      this.translations$.next(this.translations);
     });
   }
 
@@ -44,39 +42,53 @@ export class LocutusService implements OnDestroy {
   }
 
   getTranslations(scope: string): Observable<any> {
-    return this.actionLog$.pipe(
-      map(change => {
-        if (!change) return EMPTY;
-
+    return this.translations$.pipe(
+      map(_ => {
         const index = this.translations.findIndex(
           x => x.scope === scope && x.language === this.activeLanguage);
-        if (index < 0) return EMPTY;
-
+        if (index < 0) return of(null);
         return of(this.translations[index].translations);
       }),
-      switchMap(translations => translations)
+      switchMap(translations => translations),
+      distinctUntilChanged()
     );
   }
 
-  translate(scope: string, key: string): Observable<string> {
+  translate(scope: string, key: string, interpolations: string[] = []): Observable<string> {
     return this.getTranslations(scope).pipe(
       map(translations => {
         if (!translations) return EMPTY;
         if (!translations[key]) return EMPTY;
+
+        if (interpolations.length > 0) return this.interpolate(translations[key], interpolations);
 
         return translations[key];
       })
     )
   }
 
-  instant(scope: string, key: string): string {
-    const scopeIndex = this.translations.findIndex(x => x.scope === scope);
+  instant(scope: string, key: string, interpolations: string[] = []): string {
+    const scopeIndex = this.translations.findIndex(x => x.scope === scope && x.language === this.activeLanguage);
     if (scopeIndex < 0)
-      throw { name: 'TranslationNotFoundError', message: `Translation with scope=${scope} not found!`};
+      throw { name: 'TranslationNotFoundError', message: `Translation with scope=${scope} not found!` };
     if (!this.translations[scopeIndex].translations[key])
-      throw { name: 'TranslationNotFoundError', message: `Translation with scope=${scope} and key=${key} not found!`};
+      throw { name: 'TranslationNotFoundError', message: `Translation with scope=${scope} and key=${key} not found!` };
+
+    if (interpolations.length > 0) return this.interpolate(this.translations[scopeIndex].translations[key], interpolations);
 
     return this.translations[scopeIndex].translations[key];
+  }
+
+
+  interpolate(translation: string, args: string[]): string {
+    if (!translation) return translation;
+    let index = 0;
+    let interpolation = translation;
+    [...translation.matchAll(this.interpolationPattern)].forEach(match => {
+      interpolation = interpolation.replace(match[0], args[index++]);
+    });
+
+    return interpolation;
   }
 
   registerRoot(config: RootTranslationConfiguration) {
@@ -84,17 +96,13 @@ export class LocutusService implements OnDestroy {
       ...this.configurations,
       config
     ];
+    this.activeLanguage = config.language;
+    this.activeLanguage$.next(this.activeLanguage);
 
     this.subscription.add(
-      this.loadTranslation(config, config.language).subscribe(
-        _ => {
-          this.activeLanguage = config.language;
-          this.activeLanguage$.next(this.activeLanguage);
-          this.actionLog$.next({ type: 'registeredRoot' });
-
-          this.workQueue();
-        }
-      )
+      this.loadTranslation(config, config.language).subscribe(_ => {
+        this.workQueue();
+      })
     );
   }
 
@@ -103,7 +111,6 @@ export class LocutusService implements OnDestroy {
     if (this.translations.findIndex(t => t.scope === config.scope) >= 0) return;
 
     if (!this.activeLanguage) {
-      // if (this.childConfigQueue.findIndex(c => c.scope === config.scope)) return;
       this.childConfigQueue = [...this.childConfigQueue, config];
       return;
     }
@@ -114,10 +121,19 @@ export class LocutusService implements OnDestroy {
     ];
 
     this.subscription.add(
-      this.loadAllTranslations([...this.configurations], this.activeLanguage as Language).subscribe(
-        _ => this.actionLog$.next({ type: 'registeredChild' })
-      )
+      this.loadTranslation(config, this.activeLanguage as Language).subscribe()
     );
+  }
+
+  replace(replacement: TranslationConfiguration) {
+    if (this.configurations.findIndex(c => c.scope === replacement.scope) < 0) {
+      console.warn(`Could not replace scope=${replacement.scope} because it does not exist.`)
+      return;
+    }
+
+    this.configurations = this.configurations.filter(c => c.scope !== replacement.scope);
+    this.translations = this.translations.filter(c => c.scope !== replacement.scope);
+    this.registerChild(replacement);
   }
 
   private loadAllTranslations(configs: TranslationConfiguration[], lang: Language): Observable<any> {
@@ -137,7 +153,9 @@ export class LocutusService implements OnDestroy {
 
     return config.loaders[loaderIndex][lang]()
       .pipe(
-        tap(translations => {
+        map(translations => {
+          const index = this.translations.findIndex(t => t.scope === config.scope && t.language === lang);
+          if (index >= 0) return this.translations[index];
           this.translations = [
             ...this.translations,
             {
@@ -146,9 +164,9 @@ export class LocutusService implements OnDestroy {
               translations: translations
             }
           ];
-          this.translations$.next(this.translations);
-          this.actionLog$.next({ type: 'translationAdded' });
-        })
+          return translations;
+        }),
+        tap(_ => this.translations$.next(this.translations))
       );
   }
 

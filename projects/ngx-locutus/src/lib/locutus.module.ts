@@ -3,12 +3,11 @@ import { CommonModule } from '@angular/common';
 import { LocutusDirective } from './directives/locutus.directive';
 import { LocutussPipe } from './pipes/locutus.pipe';
 import { LocutusService } from './services/locutus.service';
-import { LazyLocutusGuard } from './guards/lazy-locutus.guard';
 import { RootTranslationConfiguration, TranslationConfiguration } from './models/translation-configuration.model';
 import { TRANSLATION_CONFIGURATIONS } from './injection-tokens';
-import { BehaviorSubject } from 'rxjs';
 import { RegistrationService } from './services/registration.service';
 import { registrationQueue$ } from './models/registration-queue.model';
+import { InterpolatePipe } from './pipes/interpolate.pipe';
 
 
 function initializeAppFactory(configs: (TranslationConfiguration | RootTranslationConfiguration)[], locutus: LocutusService): () => void {
@@ -31,13 +30,15 @@ function initializeAppFactory(configs: (TranslationConfiguration | RootTranslati
   declarations: [
     LocutusDirective,
     LocutussPipe,
+    InterpolatePipe,
   ],
   imports: [
     CommonModule
   ],
   exports: [
     LocutusDirective,
-    LocutussPipe
+    LocutussPipe,
+    InterpolatePipe
   ]
 })
 export class LocutusModule {
@@ -66,9 +67,7 @@ export class LocutusModule {
   }
 
   static forChild(configs: TranslationConfiguration[]): ModuleWithProviders<LocutusModule> {
-    configs.forEach(config => {
-      registrationQueue$.next(config);
-    });
+      registrationQueue$.next(configs);
 
     return {
       ngModule: LocutusModule,

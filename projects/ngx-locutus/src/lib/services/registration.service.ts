@@ -11,10 +11,10 @@ export class RegistrationService implements OnDestroy {
 
   constructor(private locutus: LocutusService) {
     this.subscription.add(
-      registrationQueue$.subscribe(config => {
-        if (config) {
+      registrationQueue$.subscribe(configs => {
+        configs.forEach(config => {
           this.locutus.registerChild(config);
-        }
+        })
       })
     );
   }
