@@ -44,8 +44,8 @@ scope1.ts includes the interface definition for the translation object and also 
 ### Import LocutusModule
 
 Call forRoot() in your AppModule and forChild in each feature module. 
-- **forRoot** needs a TranslationConfiguration consisting of the scope-name, translation-loaders and the active language
-- **forChild** needs a TranslationConfiguration consisting of the scope-name, translation-loaders 
+- **forRoot** needs an array of TranslationConfiguration consisting of the scope-name, translation-loaders and the active language
+- **forChild** needs an array of TranslationConfiguration consisting of the scope-name, translation-loaders 
 
 AppModule Import:
 
@@ -81,21 +81,3 @@ To retrieve a specific key in a scope:
 To retrieve an entire scope:
 
     this.scope1$ = this.locutus.getTranslations('scope1');
-
-### Lazy Loaded Modules
-If you have a lazy loaded module, please make sure that you define the LazyLocutusGuard on the route. Since the translation configurations are registered using APP_INITIALIZER, which is only called once when the application is bootstrapped, you will have to use the guard to register the translation configuration specified in the forChild method.
-
-    imports: [
-      CommonModule,
-      RouterModule.forChild([
-        {
-          path:  '',
-          canActivate: [LazyLocutusGuard],
-          component:  PicardComponent
-        }
-      ]),
-      LocutusModule.forChild([{
-        scope:  'picard',
-        loaders:  PicardLoaders
-      }])
-    ]

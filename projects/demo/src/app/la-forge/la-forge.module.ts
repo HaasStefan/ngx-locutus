@@ -20,11 +20,11 @@ import { RouterModule } from '@angular/router';
     ]),
     LocutusModule.forChild([
       {
-        scope: 'laForge',
+        scope: 'laForge2',
         loaders: LaForgeLoaders
       },
       {
-        scope: 'laForge2',
+        scope: 'laForge',
         loaders: LaForgeLoaders
       }
     ])
