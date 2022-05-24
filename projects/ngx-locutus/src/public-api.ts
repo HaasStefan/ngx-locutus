@@ -9,3 +9,4 @@ export * from './lib/models/translation-loader.model';
 export * from './lib/services/locutus.service';
 export * from './lib/directives/locutus.directive';
 export * from './lib/pipes/locutus.pipe';
+export * from './lib/pipes/interpolate.pipe';

@@ -73,6 +73,14 @@ Or use the **pipe**:
 
     {{ 'title' | locutus:'scope1' | async }}
 
+To interpolate a translation:
+
+    {{ 'title' | locutus:'scope1':'test' | async }}
+
+or: 
+
+    {{ 'title' | locutus:'scope1' | interpolate:'test' | async }}
+
 Or in the **code** using the LocutusService:
 
 To retrieve a specific key in a scope:
