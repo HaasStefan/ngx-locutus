@@ -18,7 +18,15 @@ export class LocutussPipe implements PipeTransform {
       .pipe(
         map(translations => {
           if (!translations) return value;
-          return this.getValue(translations, value.split('.')) as string ?? value;
+
+          const translation = this.getValue(translations, value.split('.')) as string ?? value;
+
+          if (args.length > 1) {
+            const [, ...interpolations] = args;
+            return this.locutus.interpolate(translation, interpolations);
+          }
+
+          return translation;
         })
       );
   }

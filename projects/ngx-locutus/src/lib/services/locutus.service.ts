@@ -18,12 +18,11 @@ export class LocutusService implements OnDestroy {
   private translations: Translation[] = [];
   private configurations: TranslationConfiguration[] = [];
   private childConfigQueue: TranslationConfiguration[] = [];
-
+  private readonly interpolationPattern = /{{[^}]*}}/g;
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
-
 
   setActiveLanguage(lang: Language) {
     if (this.activeLanguage === lang) {
@@ -55,25 +54,41 @@ export class LocutusService implements OnDestroy {
     );
   }
 
-  translate(scope: string, key: string): Observable<string> {
+  translate(scope: string, key: string, interpolations: string[] = []): Observable<string> {
     return this.getTranslations(scope).pipe(
       map(translations => {
         if (!translations) return EMPTY;
         if (!translations[key]) return EMPTY;
+
+        if (interpolations.length > 0) return this.interpolate(translations[key], interpolations);
 
         return translations[key];
       })
     )
   }
 
-  instant(scope: string, key: string): string {
+  instant(scope: string, key: string, interpolations: string[] = []): string {
     const scopeIndex = this.translations.findIndex(x => x.scope === scope && x.language === this.activeLanguage);
     if (scopeIndex < 0)
       throw { name: 'TranslationNotFoundError', message: `Translation with scope=${scope} not found!` };
     if (!this.translations[scopeIndex].translations[key])
       throw { name: 'TranslationNotFoundError', message: `Translation with scope=${scope} and key=${key} not found!` };
 
+    if (interpolations.length > 0) return this.interpolate(this.translations[scopeIndex].translations[key], interpolations);
+
     return this.translations[scopeIndex].translations[key];
+  }
+
+
+  interpolate(translation: string, args: string[]): string {
+    if (!translation) return translation;
+    let index = 0;
+    let interpolation = translation;
+    [...translation.matchAll(this.interpolationPattern)].forEach(match => {
+      interpolation = interpolation.replace(match[0], args[index++]);
+    });
+
+    return interpolation;
   }
 
   registerRoot(config: RootTranslationConfiguration) {

@@ -7,6 +7,7 @@ import { RootTranslationConfiguration, TranslationConfiguration } from './models
 import { TRANSLATION_CONFIGURATIONS } from './injection-tokens';
 import { RegistrationService } from './services/registration.service';
 import { registrationQueue$ } from './models/registration-queue.model';
+import { InterpolatePipe } from './pipes/interpolate.pipe';
 
 
 function initializeAppFactory(configs: (TranslationConfiguration | RootTranslationConfiguration)[], locutus: LocutusService): () => void {
@@ -29,13 +30,15 @@ function initializeAppFactory(configs: (TranslationConfiguration | RootTranslati
   declarations: [
     LocutusDirective,
     LocutussPipe,
+    InterpolatePipe,
   ],
   imports: [
     CommonModule
   ],
   exports: [
     LocutusDirective,
-    LocutussPipe
+    LocutussPipe,
+    InterpolatePipe
   ]
 })
 export class LocutusModule {
